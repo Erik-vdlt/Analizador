@@ -1,0 +1,82 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal Linea, Comillas, T_dato, Cadena, If, Else, While, For,
+    Igual, Suma, Resta, Multiplicacion, Division, Op_logico, Op_relacional,
+    Op_atribucion, Op_incremento, Op_booleano, Parentesis_a, Parentesis_b,
+    Llave_a, Llave_b, Main, Punto, Identificador,
+    Numero,Private,Public,Class,Met, ERROR;
+non terminal INICIO, SENTENCIA, DECLARACION, DECLARACION_FOR, IF, IF_ELSE,
+    WHILE, FOR, SENTENCIA_BOOLEANA, SENTENCIA_FOR;
+
+start with INICIO;
+
+INICIO ::= Main Llave_a SENTENCIA Llave_b | Class Identificador Llave_a Main Llave_a SENTENCIA Llave_b Llave_b
+;
+
+SENTENCIA ::= 
+    SENTENCIA DECLARACION |
+    DECLARACION |
+    SENTENCIA IF | 
+    IF |
+    SENTENCIA IF_ELSE |
+    IF_ELSE |
+    SENTENCIA WHILE |
+    WHILE |
+    SENTENCIA FOR |
+    FOR 
+;
+
+DECLARACION ::= 
+    T_dato Identificador Punto | 
+    T_dato Identificador Op_atribucion Numero Punto |
+    T_dato Identificador Igual Numero Punto |
+    T_dato Identificador Op_incremento Punto | 
+    T_dato Op_incremento Identificador Punto | 
+    Cadena Identificador Op_atribucion Comillas Comillas Punto |
+    Cadena Identificador Igual Comillas Comillas Punto |
+    Cadena Identificador Op_atribucion Comillas Identificador Comillas Punto |
+    Cadena Identificador Igual Comillas Identificador Comillas Punto
+;
+
+IF ::= If Parentesis_a SENTENCIA_BOOLEANA Parentesis_b Llave_a SENTENCIA Llave_b
+;
+
+SENTENCIA_BOOLEANA ::= 
+    Op_booleano | 
+    Identificador Op_relacional Op_booleano |
+    Identificador Op_relacional Numero |
+    Identificador Op_relacional Identificador |
+    Identificador Op_relacional Comillas Comillas |
+    Identificador Op_relacional Comillas Identificador Comillas
+;
+
+IF_ELSE ::= If Parentesis_a SENTENCIA_BOOLEANA Parentesis_b Llave_a SENTENCIA Llave_b Else Llave_a SENTENCIA Llave_b
+;
+WHILE ::= While Parentesis_a SENTENCIA_BOOLEANA Parentesis_b Llave_a SENTENCIA Llave_b
+;
+FOR ::= For Parentesis_a SENTENCIA_FOR Parentesis_b Llave_a SENTENCIA Llave_b
+;
+SENTENCIA_FOR ::=
+    T_dato Identificador Igual Numero Punto SENTENCIA_BOOLEANA Punto DECLARACION_FOR |
+    Identificador Igual Numero Punto SENTENCIA_BOOLEANA Punto DECLARACION_FOR
+;
+DECLARACION_FOR ::= 
+    Identificador Op_atribucion Numero |
+    Identificador Op_incremento | 
+    Op_incremento Identificador
+;
